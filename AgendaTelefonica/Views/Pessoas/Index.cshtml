@@ -1,0 +1,130 @@
+﻿@model IEnumerable<AgendaTelefonica.Models.Pessoa>
+
+@{
+    ViewData["Title"] = "Contatos Cadastrados";
+}
+
+<div class="alert alert-dark row align-content-center">
+    <div class="col-10 align-content-start">
+        <h6>Você tem @Model.Count() contatos cadastrados</h6>
+
+    </div>
+    <div class=" col-2 align-content-end">
+        <a asp-action="CriarPessoa" class="btn btn-sm btn-outline-dark">Novo contato</a>
+
+    </div>
+</div>
+
+<!--Search-->
+<p>
+     
+    @using (Html.BeginForm("index", "Nome", FormMethod.Get))
+    {
+        @Html.TextBox("Pesquisa")
+        <input type="submit" value="Buscar"/>
+    }
+
+</p>
+
+<div>
+
+    <!-- Comparativo-->
+    @if (TempData["ContatoNovo"] != null)
+    {
+        <p class="alert alert-success">@TempData["ContatoNovo"].ToString()</p>
+    }
+    @if (TempData["ContatoAtualizado"] != null)
+    {
+        <p class="alert alert-primary">@TempData["ContatoAtualizado"].ToString()</p>
+    }
+    @if (TempData["ContatoExcluido"] != null)
+    {
+        <p class="alert alert-danger">@TempData["ContatoExcluido"].ToString()</p>
+    }
+ </div>
+
+<hr />
+
+<!--Estrutura de cads-->
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-4 pt-5">
+            <div class="card">
+                <div class=" card-body">
+                    <div class="card-title">
+                        <div class="row">
+                            <div class=" col-9 align-content-star">
+                                <h6>@item.Nome @item.Sobrenome</h6>
+                            </div>
+
+                            <div class="col-3 badge badge-pill badge-secondary">
+                                <text class="aling-middle">@item.TipoTelefone</text>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-text">
+                        <h6 class="badge badge-info">@item.Telefone</h6>
+                    </div>
+
+                </div>
+                <div class="card-footer">
+                    <a asp-action="AtualizarPessoa" asp-route-pessoaid="@item.PessoaId" class="btn bnt-sm btn-outline-primary">Atualizar</a> |
+                    <a class="btn bnt-sm btn-outline-danger" onclick="ConfirmarExclusao(@item.PessoaId, '@item.Nome')">Excluir</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!--Modal de ação -->
+<div class="modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmação de Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Deseja excluir o contato de <text class="nomeContato"></text>?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary btnFechar" data-dismiss="modal">Não</button>
+                <button type="button" class="btn btn-outline-danger btnExcluir" data-dismiss="modal">Sim</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+    <script>
+        function ConfirmarExclusao(pessoaId, nomeContato) {
+            $(".nomeContato").text(nomeContato);
+            $(".modal").modal();
+
+            $(".btnExcluir").on('click', function () {
+                $.ajax({
+                    url: 'Pessoas/ExcluirPessoa',
+                    method: 'POST',
+                    data: { pessoaId: pessoaId },
+                    success: function (data) {
+                        location.reload(true);
+                    }
+
+                });
+            });
+
+            $(".btnFechar").on('click', function () {
+                pessoaId = null;
+                nomeContato = null;
+                $(".modal").modal('hide');
+
+            })
+        }
+
+
+    </script>
+}
