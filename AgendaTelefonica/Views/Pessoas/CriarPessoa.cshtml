@@ -11,6 +11,15 @@
     {
         <p class="alert alert-danger">@TempData["CPFDuplicado"].ToString()</p>
     }
+    @if (TempData["CPFObrigatorio"] != null)
+    {
+        <p class="alert alert-danger">@TempData["CPFObrigatorio"].ToString()</p>
+    }
+    @if (TempData["MenorIdade"] != null)
+    {
+        <p class="alert alert-danger">@TempData["MenorIdade"].ToString()</p>
+    }
+
 </div>
 
 <hr />

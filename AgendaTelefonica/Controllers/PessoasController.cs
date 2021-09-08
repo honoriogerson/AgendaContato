@@ -17,16 +17,9 @@ namespace AgendaTelefonica.Controllers
             _contexto = contexto;
         }
 
-        public async Task<IActionResult> Index(string Pesquisa = "")
+        public async Task<IActionResult> Index()
         {
-            //Ação para retornar a pesquisa na busca
-            var q = _contexto.Pessoas.AsQueryable();
-            if (!string.IsNullOrEmpty(Pesquisa))
-
-                q = q.Where(c => c.Nome.Contains(Pesquisa));
-            q = q.OrderBy(c => c.Nome.ToList());
-
-            //Esse return já estava, não apagar
+           
             return View(await _contexto.Pessoas.ToListAsync());
         }
 
@@ -50,7 +43,29 @@ namespace AgendaTelefonica.Controllers
                     TempData["CPFDuplicado"] = "Esse CPF já está cadastrado";
                     return View();
                 }
+
+                //Verifica se a cidade é SP, e faz CPF Obrigatório 
+                if (await _contexto.Pessoas.AnyAsync(a => a.Cidade == Cidade.SP) && pessoa.CPF == null)
+                {
+                    ModelState.Clear();
+                    TempData["CPFObrigatorio"] = "O CPF é obrigatório";
+                    return View();
+                }
+
+                //Verifica se é de MG e não deixa cadastrar de for menor de idade
+                if (await _contexto.Pessoas.AnyAsync(b => b.Cidade == Cidade.MG))
+                {
+
+                    int idade = DateTime.Now.Year - pessoa.DataNascimento.Year;
+                    if (idade < 18)
+                    {
+                        ModelState.Clear();
+                        TempData["MenorIdade"] = "Você é menor de idade, não pode ser cadastrado";
+                        return View();
+                    }
+                }
             }
+            pessoa.DataHoraCadastro = DateTime.Now;
             _contexto.Add(pessoa);
             await _contexto.SaveChangesAsync();
             TempData["ContatoNovo"] = $"Contato de {pessoa.Nome} {pessoa.Sobrenome} incluído com sucesso";
@@ -74,7 +89,7 @@ namespace AgendaTelefonica.Controllers
         {
             if (ModelState.IsValid)
             {
-                //Verificação de CPF duplicado
+                //Verificação de CPF duplicado na atualização
                 if (await _contexto.Pessoas.AnyAsync(x => x.CPF == pessoa.CPF))
                 {
                     ModelState.Clear();
@@ -82,7 +97,26 @@ namespace AgendaTelefonica.Controllers
                     //Manter a persistencia
                     return View();
                 }
+                //Verifica se a cidade é SP, e faz CPF Obrigatório 
+                if (await _contexto.Pessoas.AnyAsync(a => a.Cidade == Cidade.SP) && pessoa.CPF == null)
+                {
+                    ModelState.Clear();
+                    TempData["CPFObrigatorio"] = "O CPF é obrigatório";
+                    return View();
+                }
+                //Verifica se é de MG e não deixa cadastrar de for menor de idade
+                if (await _contexto.Pessoas.AnyAsync(b => b.Cidade == Cidade.MG))
+                {
+                    int idade = DateTime.Now.Year - pessoa.DataNascimento.Year;
+                    if (idade < 18)
+                    {
+                        ModelState.Clear();
+                        TempData["MenorIdade"] = "Você é menor de idade, não pode ser cadastrado";
+                        return View();
+                    }
+                }
             }
+            pessoa.DataHoraCadastro = DateTime.Now;
             _contexto.Update(pessoa);
             await _contexto.SaveChangesAsync();
             TempData["ContatoAtualizado"] = $"Contato de {pessoa.Nome} {pessoa.Sobrenome} foi atualizado com sucesso";
