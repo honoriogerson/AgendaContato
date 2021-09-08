@@ -1,4 +1,4 @@
-﻿using ProjetoIESB.Models;
+﻿
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,7 +12,6 @@ namespace AgendaTelefonica.Models
         public int PessoaId { get; set; }
        
         [Required(ErrorMessage = "CPF obrigatório")]
-        [CustomValidationCPF(ErrorMessage = "CPF inválido")]
         public string CPF { get; set; }
 
         public string Telefone { get; set; }

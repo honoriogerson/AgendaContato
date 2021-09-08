@@ -19,7 +19,6 @@ namespace AgendaTelefonica.Controllers
 
         public async Task<IActionResult> Index()
         {
-           
             return View(await _contexto.Pessoas.ToListAsync());
         }
 
@@ -41,7 +40,7 @@ namespace AgendaTelefonica.Controllers
                 {
                     ModelState.Clear();
                     TempData["CPFDuplicado"] = "Esse CPF já está cadastrado";
-                    return View();
+                    return View(pessoa);
                 }
 
                 //Verifica se a cidade é SP, e faz CPF Obrigatório 
@@ -49,10 +48,10 @@ namespace AgendaTelefonica.Controllers
                 {
                     ModelState.Clear();
                     TempData["CPFObrigatorio"] = "O CPF é obrigatório";
-                    return View();
+                    return View(pessoa);
                 }
 
-                //Verifica se é de MG e não deixa cadastrar de for menor de idade
+                //Verifica se é de MG e não deixa atualizar de for menor de idade
                 if (await _contexto.Pessoas.AnyAsync(b => b.Cidade == Cidade.MG))
                 {
 
@@ -61,7 +60,7 @@ namespace AgendaTelefonica.Controllers
                     {
                         ModelState.Clear();
                         TempData["MenorIdade"] = "Você é menor de idade, não pode ser cadastrado";
-                        return View();
+                        return View(pessoa);
                     }
                 }
             }

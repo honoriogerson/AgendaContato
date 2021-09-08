@@ -7,6 +7,7 @@
   <ItemGroup>
     <Compile Remove="Controllers\ValidacaoController.cs" />
     <Compile Remove="Controllers\VerificacaoController.cs" />
+    <Compile Remove="Models\CustomValidationCPFAttribute.cs" />
   </ItemGroup>
 
   <ItemGroup>
