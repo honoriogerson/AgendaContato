@@ -22,14 +22,14 @@ namespace AgendaTelefonica
 
         public IConfiguration Configuration { get; }
 
-        // Metodo de conexao com BD
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<Contexto>(opcoes => opcoes.UseSqlServer(Configuration.GetConnectionString("ConexaoBD")));
             services.AddControllersWithViews();
         }
 
-        
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
