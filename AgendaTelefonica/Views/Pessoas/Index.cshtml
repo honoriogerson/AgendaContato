@@ -16,16 +16,15 @@
 </div>
 
 <!--Search-->
-<p>
 
+<div>
     @using (Html.BeginForm("Index", "Nome", FormMethod.Get))
     {
         @Html.TextBox("Pesquisa")
 
         <input type="submit" value="Buscar" class="btn btn-sm btn-outline-secondary" />
     }
-
-</p>
+</div>
 
 <div>
 

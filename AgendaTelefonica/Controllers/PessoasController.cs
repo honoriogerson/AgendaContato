@@ -21,6 +21,7 @@ namespace AgendaTelefonica.Controllers
         {   //Procura por nome
             var q = _contexto.Pessoas.AsQueryable();
             if (!string.IsNullOrEmpty(Pesquisa))
+
                 q = q.Where(q => q.Nome.Contains(Pesquisa));
 
             return View(await _contexto.Pessoas.ToListAsync());
@@ -101,6 +102,7 @@ namespace AgendaTelefonica.Controllers
                     ModelState.Clear();
                     TempData["CPFDuplicado"] = "Esse CPF está sendo usado por outro usuário cadastrado";
                     return View(pessoa);
+
                 }
                 //Verifica se a cidade é SP, e faz CPF Obrigatório 
                 if (await _contexto.Pessoas.AnyAsync(a => a.Cidade == Cidade.SP) && pessoa.CPF == null)
